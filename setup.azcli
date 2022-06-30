@@ -1,0 +1,23 @@
+L=northeurope
+RG=anbossar-app-config-test
+S=anbosstorage1
+F=anbofunc222
+AC=anbossarac1223
+FE=beta
+az group create -n $RG -l $L
+az storage account create --name $S --location $L --resource-group $RG --sku Standard_LRS
+az functionapp create --name $F \
+    --storage-account $S \
+    --consumption-plan-location $L \
+    --resource-group $RG \
+    --functions-version 4
+
+az appconfig create --location $L \
+                    --name $AC \
+                    --resource-group $RG \
+                    --assign-identity \
+                    --enable-public-network true \
+                    --enable-purge-protection false \
+                    --sku Free
+
+az appconfig feature set -n $AC -y --feature $FE
