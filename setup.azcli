@@ -12,6 +12,8 @@ az functionapp create --name $F \
     --resource-group $RG \
     --functions-version 4
 
+export ACONNECTIONSTRING=`az appconfig credential list -g $RG -n $AC --query "[?readOnly].connectionString|[0]" | tr -d \"`
+
 az appconfig create --location $L \
                     --name $AC \
                     --resource-group $RG \
@@ -21,3 +23,8 @@ az appconfig create --location $L \
                     --sku Free
 
 az appconfig feature set -n $AC -y --feature $FE
+
+func host start &
+
+az appconfig feature enable -n $AC -y --feature $FE
+az appconfig feature disable -n $AC -y --feature $FE
